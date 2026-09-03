@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Models;
@@ -15,9 +16,9 @@ public partial class SystemUser
 
     public string Phone { get; set; } = null!;
 
-    public int Roles { get; set; }
+    public Role? Roles { get; set; }
 
-    public int Status { get; set; }
+    public Status? Status { get; set; }
 
     public DateTime CreatedDate { get; set; }
 

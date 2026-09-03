@@ -1,2 +1,2 @@
-# Job_Portal_Syatem_Project
+# Job_Portal_System_Project
 This Repository for the job portal system peoject

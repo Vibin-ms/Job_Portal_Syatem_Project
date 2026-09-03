@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="API\" />
-    <Folder Include="Extention &amp; Helpers\" />
+    <Folder Include="API\AdminController\Request &amp; Response Body\" />
+    <Folder Include="API\JobSeekeerController\Request &amp; Response Body\" />
   </ItemGroup>
 
 </Project>

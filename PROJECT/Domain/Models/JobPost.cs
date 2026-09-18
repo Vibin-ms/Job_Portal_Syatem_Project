@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Models;
@@ -29,7 +30,7 @@ public partial class JobPost
 
     public DateTime DeadLine { get; set; }
 
-    public int Status { get; set; }
+    public JobStatus Status { get; set; }
 
     public virtual ICollection<AppliedJob> AppliedJobs { get; set; } = new List<AppliedJob>();
 

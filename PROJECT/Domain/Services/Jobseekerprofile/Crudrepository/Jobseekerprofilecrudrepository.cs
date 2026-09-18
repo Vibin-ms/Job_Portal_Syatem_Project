@@ -220,6 +220,10 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
 
 
        
+        // =====================================================
+        // GET ALL LOCATIONS
+        // =====================================================
+
         public async Task<List<Domain.Models.Location>> GetAllLocations()
         {
             return await context.Locations
@@ -323,6 +327,12 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                 await transaction.RollbackAsync();
                 throw;
             }
+        public async Task<IEnumerable<JobSeekerProfile>> GetAllJobSeekersAsync()
+        {
+            var jobseekers = await context.JobSeekerProfiles.
+                Include(x => x.JobSeeker).ThenInclude(x => x.SystemUser).Include(x=>x.Skill).
+                Include(x=>x.Qualification).Include(x=>x.Experience).Include(x=>x.Location).ToListAsync();
+            return jobseekers;
         }
     }
 }

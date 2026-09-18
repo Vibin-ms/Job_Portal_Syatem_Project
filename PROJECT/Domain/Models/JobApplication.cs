@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Models;
@@ -11,7 +12,7 @@ public partial class JobApplication
 
     public Guid AppliedJobId { get; set; }
 
-    public int ApplicationStatus { get; set; }
+    public ApplicationStatus ApplicationStatus { get; set; }
 
     public DateTime ApplicationDate { get; set; }
 

@@ -16,4 +16,5 @@ public partial class JobProvider
     public virtual ICollection<JobPost> JobPosts { get; set; } = new List<JobPost>();
 
     public virtual SystemUser SystemUser { get; set; } = null!;
+    public virtual ICollection<Company> Companies { get; set; } = new List<Company>();
 }

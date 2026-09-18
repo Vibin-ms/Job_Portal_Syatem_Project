@@ -28,7 +28,9 @@ namespace Domain.Services.Jobseekerprofile.Interface
 
         Task<List<Experience>> GetAllExperiences();
 
-        Task<List<Location>> GetAllLocations();
+        Task<List<Domain.Models.Location>> GetAllLocations();
+
+        Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync();
 
     }
 }

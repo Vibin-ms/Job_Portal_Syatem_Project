@@ -1,10 +1,17 @@
 ﻿using AutoMapper;
+using Azure;
+using Domain.Services.AcceptORRejectCompany.Interface;
+using Domain.Services.CompanyProfile.Interface;
 using Domain.Services.Experiences.DTO;
 using Domain.Services.Experiences.Interface;
 using Domain.Services.Industrys.DTO;
 using Domain.Services.Industrys.Interface;
+using Domain.Services.JobApplications.Interface;
 using Domain.Services.JobCategorys.DTO;
 using Domain.Services.JobCategorys.Interface;
+using Domain.Services.JobPost.Interface;
+using Domain.Services.JobProviderProfile.Interface;
+using Domain.Services.Jobseekerprofile.Interface;
 using Domain.Services.JobTypes.DTO;
 using Domain.Services.JobTypes.Interfaces;
 using Domain.Services.Location.DTO;
@@ -14,12 +21,15 @@ using Domain.Services.Qualifications.Interface;
 using Domain.Services.Skills.DTO;
 using Domain.Services.Skills.Interface;
 using Job_Portal_System.API.AdminController.Request___Response_Body;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Job_Portal_System.API.AdminController
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
@@ -31,10 +41,18 @@ namespace Job_Portal_System.API.AdminController
         private readonly IIndustryServices industryServices;
         private readonly ICategoryServices categoryservices;
         private readonly IJobTypeServices jobtypeservices;
+        private readonly ICrudservice crudservice;
+        private readonly IJobProviderServices jobproviderservices;
+        private readonly ICompanySerices companyserings;
+        private readonly IJobPostServices jobPostServices;
+        private readonly IAccpetORRejectServices accpetORRejectServices;
+        private readonly IApplicationServices applicationservices;
         private readonly IMapper mapper;
         public AdminController(ISkillServices _skillservices, IMapper _mapper, ILocationServices _locationservices,
             IQualificationServices _qualificationservices, IExperienceServices _experienceservices, IIndustryServices _industryServices,
-            ICategoryServices _categoryservices, IJobTypeServices _jobtypeservices)
+            ICategoryServices _categoryservices, IJobTypeServices _jobtypeservices, ICrudservice _crudservice,
+            IJobProviderServices _jobproviderservices, ICompanySerices _companyserings, IJobPostServices _jobPostServices,
+            IAccpetORRejectServices _accpetORRejectServices, IApplicationServices _applicationservices)
         {
             skillservices = _skillservices;
             mapper = _mapper;
@@ -44,6 +62,12 @@ namespace Job_Portal_System.API.AdminController
             industryServices = _industryServices;
             categoryservices = _categoryservices;
             jobtypeservices = _jobtypeservices;
+            crudservice = _crudservice;
+            jobproviderservices = _jobproviderservices;
+            companyserings = _companyserings;
+            jobPostServices = _jobPostServices;
+            accpetORRejectServices = _accpetORRejectServices;
+            applicationservices = _applicationservices;
         }
         [HttpPost]
         [Route("AddSkill")]
@@ -84,7 +108,7 @@ namespace Job_Portal_System.API.AdminController
             {
                 var skills = await skillservices.GetSkillAsync();
                 var respons = mapper.Map<IEnumerable<SkillResponse>>(skills);
-                if(respons==null)
+                if(respons==null || !respons.Any())
                 {
                     return NotFound("No data found");
                 }
@@ -187,7 +211,7 @@ namespace Job_Portal_System.API.AdminController
             {
                 var allLoc = await locationservices.GetAllLocationAsync();
                 var Loc = mapper.Map<IEnumerable<LocationResponse>>(allLoc);
-                if(Loc==null)
+                if(Loc==null||!Loc.Any())
                 {
                     return NotFound("There is no data to show");
                 }
@@ -281,7 +305,7 @@ namespace Job_Portal_System.API.AdminController
             {
                 var quali = await qualificationservices.GetAllQualificationsAsync();
                 var response = mapper.Map<IEnumerable<QualificationResponse>>(quali);
-                if(response==null)
+                if(response==null || !response.Any())
                 {
                     return NotFound("There is no data added");
                 }
@@ -375,7 +399,7 @@ namespace Job_Portal_System.API.AdminController
             {
                 var Exp = await experienceservices.GetAllExperienceAsync();
                 var response = mapper.Map<IEnumerable<ExperienceResponse>>(Exp);
-                if (response == null)
+                if (response == null || !response.Any())
                 {
                     return NotFound("There is no data added");
                 }
@@ -469,7 +493,7 @@ namespace Job_Portal_System.API.AdminController
             {
                 var Ind = await industryServices.GetAllIndustryAsync();
                 var response = mapper.Map<IEnumerable<IndustryResponse>>(Ind);
-                if (response == null)
+                if (response == null || !response.Any())
                 {
                     return NotFound("There is no data added");
                 }
@@ -564,7 +588,7 @@ namespace Job_Portal_System.API.AdminController
             {
                 var cat = await categoryservices.GetAllCategoryAsync();
                 var response = mapper.Map<IEnumerable<CategoryResponse>>(cat);
-                if (response == null)
+                if (response == null||!response.Any())
                 {
                     return NotFound("There is no data added");
                 }
@@ -658,7 +682,7 @@ namespace Job_Portal_System.API.AdminController
             {
                 var Type = await jobtypeservices.GetAllJobTypeAsync();
                 var response = mapper.Map<IEnumerable<JobTypeResponse>>(Type);
-                if (response == null)
+                if (response == null||!response.Any())
                 {
                     return NotFound("There is no data added");
                 }
@@ -712,6 +736,266 @@ namespace Job_Portal_System.API.AdminController
             }
             return Ok("JobType deleted successfully");
         }
+
+
+        //JobSeeker Profile//
+
+        [HttpGet]
+        [Route("GetAllJobSeekers")]
+        public async Task<IActionResult>GetAllJobSeekers()
+        {
+            try
+            {
+                var jobseekers = await crudservice.GetAllJobSeekerAsync();
+                var seekers = mapper.Map<IEnumerable<JobSeekerProfileResponse>>(jobseekers);
+                if (seekers == null||!seekers.Any())
+                {
+
+                     return NotFound("There is NO Data Found");
+                }
+                return Ok(seekers);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("GetAllProviders")]
+        public async Task<IActionResult>GetAllProviders()
+        {
+            try
+            {
+                var provider = await jobproviderservices.GetAllProviderAsync();
+                var allProvier = mapper.Map<IEnumerable<JobProviderResponse>>(provider);
+                if(allProvier == null||!allProvier.Any())
+                {
+                    return NotFound("There Is No Data Found");
+                }
+                return Ok(allProvier);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete]
+        [Route("DeleteProvider/{id:guid}")]
+        public async Task<IActionResult>DeleteProvider(Guid id)
+        {
+            var provider=await jobproviderservices.DeleteProviderAsync(id);
+            if(!provider)
+            {
+                return NotFound("Invalid Id");
+            }
+            return Ok("This provider Is Deleted Successfully");
+        }
+        [HttpGet]
+        [Route("GetAllJobs")]
+        public async Task<IActionResult> GetAllJobs()
+        {
+            try
+            {
+                var job = await jobPostServices.GetAllJobAsync();
+                var AllJob = mapper.Map<IEnumerable<JobPostResponse>>(job);
+                if (AllJob == null || !AllJob.Any())
+                {
+                    return NotFound("There is no Data");
+                }
+                return Ok(AllJob);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete]
+        [Route("DeleteJob/{id:guid}")]
+        public async Task<IActionResult> DeleteJob(Guid id)
+        {
+            var job = await jobPostServices.DeleteJobAsync(id);
+            if (!job)
+            {
+                return NotFound("Invalid Id");
+            }
+            return Ok("This company Is Deleted Successfully");
+        }
+        [HttpGet]
+        [Route("GetAllCompanies")]
+        public async Task<IActionResult> GetAllCompanies()
+        {
+            try
+            {
+                var company = await companyserings.GetAllCompanyAsync();
+                var comp = mapper.Map<IEnumerable<CompanyResponse>>(company);
+                if (comp == null || !comp.Any())
+                {
+                    return NotFound("There is no Data");
+                }
+                return Ok(comp);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("GetPendingCompanies")]
+        public async Task<IActionResult> GetPendingCompanies()
+        {
+            try
+            {
+                var company = await companyserings.GetPendingCompanyAsync();
+                var comp = mapper.Map<IEnumerable<CompanyResponse>>(company);
+                if (comp == null || !comp.Any())
+                {
+                    return NotFound("There is no Data");
+                }
+                return Ok(comp);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpPut]
+        [Route("AcceptCompany/{companyid:guid}")]
+        public async Task<IActionResult>AcceptCompany(Guid companyid)
+        {
+            try
+            {
+                var accepted = await accpetORRejectServices
+                    .AcceptCompanyAsync(companyid);
+
+                if (!accepted)
+                {
+                    return NotFound("There is no company with this ID");
+                }
+
+                return Ok("Company accepted, mail sent successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpPut]
+        [Route("RejectCompany/{companyid:guid}")]
+        public async Task<IActionResult> RejectCompany(Guid companyid)
+        {
+            try
+            {
+                var Rejected = await accpetORRejectServices
+                    .RejectCompanyAsync(companyid);
+
+                if (!Rejected)
+                {
+                    return NotFound("There is no company with this ID");
+                }
+
+                return Ok("Company Rejected, mail sent successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [HttpGet]
+        [Route("GetAcceptedCompanies")]
+        public async Task<IActionResult> GetAcceptedCompanies()
+        {
+            try
+            {
+                var company = await companyserings.GetAcceptedCompanyAsync();
+                var comp = mapper.Map<IEnumerable<CompanyResponse>>(company);
+                if (comp == null || !comp.Any())
+                {
+                    return NotFound("There is no Data");
+                }
+                return Ok(comp);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetRejectedCompanies")]
+        public async Task<IActionResult> GetRejectedCompanies()
+        {
+            try
+            {
+                var company = await companyserings.GetRejectedCompanyAsync();
+                var comp = mapper.Map<IEnumerable<CompanyResponse>>(company);
+                if (comp == null || !comp.Any())
+                {
+                    return NotFound("There is no Data");
+                }
+                return Ok(comp);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("GetCompaniesByProvider/{providerId:guid}")]
+        public async Task<IActionResult> GetCompaniesByProvider(Guid providerId)
+        {
+            try
+            {
+                var company = await companyserings.GetCompaniesByProviderAsync(providerId);
+                var comp = mapper.Map<IEnumerable<CompanyResponse>>(company);
+                if (comp == null || !comp.Any())
+                {
+                    return NotFound("There is no Data");
+                }
+                return Ok(comp);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("DeleteCompany/{id:guid}")]
+        public async Task<IActionResult> DeleteCompany(Guid id)
+        {
+            var company = await companyserings.DeleteCompanyAsync(id);
+            if (!company)
+            {
+                return NotFound("Invalid Id");
+            }
+            return Ok("This company Is Deleted Successfully");
+        }
+        [HttpGet]
+        [Route("ApplicationsByJobPost/{jobpostId:guid}")]
+        public async Task<IActionResult>GetApplicationsByJobPost(Guid jobpostId)
+        {
+            try
+            {
+                var applications = await applicationservices.GetApplicationsByJobPostAsync(jobpostId);
+                var jobapplications = mapper.Map<IEnumerable<ApplicationResponse>>(applications);
+                if(jobapplications == null || !jobapplications.Any())
+                {
+                    return NotFound("There is no Applications yet");
+                }
+                return Ok(jobapplications);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
     }
 }

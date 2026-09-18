@@ -15,12 +15,13 @@ namespace Domain.Services.Jobseekerprofile.Interface
           Guid systemUserId);
 
         Task<Jobseekerprofiledto?> UpdateProfile(
-            Guid id,
-            Jobseekerprofiledto dto);
+     Guid systemUserId,
+     Jobseekerprofiledto dto);
 
         Task<bool> DeleteProfile(Guid id);
 
-        Task<Jobseekerprofiledto?> GetProfileById(Guid id);
+        Task<Jobseekerprofiledto?> GetProfileBySystemUserId(
+     Guid systemUserId);
 
         Task<List<Skill>> GetAllSkills();
 
@@ -28,7 +29,8 @@ namespace Domain.Services.Jobseekerprofile.Interface
 
         Task<List<Experience>> GetAllExperiences();
 
-        Task<List<Location>> GetAllLocations();
+        Task<List<Domain.Models.Location>> GetAllLocations();
+        Task<bool> DeleteJobSeekerAccount(Guid systemUserId);
 
     }
 }

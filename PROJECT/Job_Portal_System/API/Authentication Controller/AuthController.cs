@@ -4,6 +4,7 @@ using Domain.Services.Authentication.Interface;
 using Domain.Services.Authentication.JWT.Interface;
 using Job_Portal_System.API.Authentication_Controller.Login;
 using Job_Portal_System.API.Authentication_Controller.Register;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -133,7 +134,31 @@ namespace Job_Portal_System.API.Authentication_Controller
             return Ok(response);
         }
 
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var authorizationHeader = Request.Headers["Authorization"].ToString();
 
+            if (string.IsNullOrEmpty(authorizationHeader))
+            {
+                return Unauthorized();
+            }
+
+            if (!authorizationHeader.StartsWith("Bearer "))
+            {
+                return Unauthorized();
+            }
+
+            var token = authorizationHeader.Substring("Bearer ".Length).Trim();
+
+            await _authService.LogoutAsync(token);
+
+            return Ok(new
+            {
+                message = "Logout successful"
+            });
+        }
 
 
     }

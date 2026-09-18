@@ -25,11 +25,10 @@ namespace Domain.Services.Jobseekerprofile.Interface
         Task<bool> DeleteProfile(
             Guid profileId);
 
-        Task<JobSeekerProfile?> GetProfileById(
-            Guid id);
+        Task<JobSeekerProfile?> GetProfileBySystemUserId(
+     Guid systemUserId);
 
 
-       
 
         Task<List<Skill>> GetAllSkills();
 
@@ -37,6 +36,7 @@ namespace Domain.Services.Jobseekerprofile.Interface
 
         Task<List<Experience>> GetAllExperiences();
 
-        Task<List<Location>> GetAllLocations();
+        Task<List<Domain.Models.Location>> GetAllLocations();
+        Task<bool> DeleteJobSeekerAccount(Guid systemUserId);
     }
 }

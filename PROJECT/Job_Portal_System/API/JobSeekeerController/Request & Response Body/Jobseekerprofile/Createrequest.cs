@@ -2,11 +2,11 @@
 {
     public class Createrequest
     {
-        // JobSeekerProfile
+        
         public string? About { get; set; }
         public string? ResumeUrl { get; set; }
 
-        // Existing Admin Master Data
+      
         public Guid SkillId { get; set; }
         public Guid QualificationId { get; set; }
         public Guid ExperienceId { get; set; }

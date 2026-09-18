@@ -15,5 +15,9 @@ namespace Domain.Services.Authentication.Interface
         Task<AuthUser?> LoginAsync(
             string email,
             string password);
+
+        Task LogoutAsync(string token);
+
+        Task<bool> IsTokenRevokedAsync(string token);
     }
 }

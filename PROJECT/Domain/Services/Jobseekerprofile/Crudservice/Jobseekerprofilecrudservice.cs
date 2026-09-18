@@ -19,9 +19,8 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-        // =====================================================
-        // CREATE PROFILE
-        // =====================================================
+       
+      
 
         public async Task<Jobseekerprofiledto?> CreateProfile(
             Jobseekerprofiledto dto,
@@ -44,7 +43,7 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
 
                 ResumeUrl = dto.ResumeUrl,
 
-                // Existing Admin master IDs
+              
                 SkillId = dto.SkillId,
 
                 QualificationId = dto.QualificationId,
@@ -66,33 +65,25 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-        // =====================================================
-        // UPDATE PROFILE
-        // =====================================================
+
 
         public async Task<Jobseekerprofiledto?> UpdateProfile(
-            Guid id,
-            Jobseekerprofiledto dto)
+     Guid systemUserId,
+     Jobseekerprofiledto dto)
         {
             var profile =
-                await repository.GetProfileById(id);
+                await repository.GetProfileBySystemUserId(systemUserId);
 
             if (profile == null)
                 return null;
 
-
-            // =========================
-            // Profile
-            // =========================
 
             profile.About = dto.About;
 
             profile.ResumeUrl = dto.ResumeUrl;
 
 
-            // =========================
-            // SystemUser
-            // =========================
+          
 
             if (profile.JobSeeker?.SystemUser != null)
             {
@@ -110,9 +101,7 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
             }
 
 
-            // =========================
-            // Existing Admin Master IDs
-            // =========================
+           
 
             profile.SkillId = dto.SkillId;
 
@@ -128,7 +117,7 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
 
             var updatedProfile =
                 await repository.UpdateProfile(
-                    id,
+                    profile.JobSeekerProfileId,
                     profile);
 
             if (updatedProfile == null)
@@ -139,9 +128,6 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-        // =====================================================
-        // DELETE PROFILE
-        // =====================================================
 
         public async Task<bool> DeleteProfile(Guid id)
         {
@@ -149,27 +135,21 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-        // =====================================================
-        // GET PROFILE
-        // =====================================================
-
-        public async Task<Jobseekerprofiledto?> GetProfileById(
-            Guid id)
+      
+        public async Task<Jobseekerprofiledto?> GetProfileBySystemUserId(
+     Guid systemUserId)
         {
             var profile =
-                await repository.GetProfileById(id);
+                await repository.GetProfileBySystemUserId(systemUserId);
 
             if (profile == null)
                 return null;
 
-            return mapper.Map<Jobseekerprofiledto>(
-                profile);
+            return mapper.Map<Jobseekerprofiledto>(profile);
         }
 
 
-        // =====================================================
-        // GET ALL SKILLS
-        // =====================================================
+       
 
         public async Task<List<Skill>> GetAllSkills()
         {
@@ -177,9 +157,7 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-        // =====================================================
-        // GET ALL QUALIFICATIONS
-        // =====================================================
+      
 
         public async Task<List<Qualification>> GetAllQualifications()
         {
@@ -187,9 +165,8 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-        // =====================================================
-        // GET ALL EXPERIENCES
-        // =====================================================
+       
+       
 
         public async Task<List<Experience>> GetAllExperiences()
         {
@@ -197,6 +174,8 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
+       
+        
         // =====================================================
         // GET ALL LOCATIONS
         // =====================================================
@@ -205,6 +184,9 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         {
             return await repository.GetAllLocations();
         }
+        public async Task<bool> DeleteJobSeekerAccount(Guid systemUserId)
+        {
+            return await repository.DeleteJobSeekerAccount(systemUserId);
 
         public async Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync()
         {

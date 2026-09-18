@@ -14,9 +14,6 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
             context = _context;
         }
 
-        // =====================================================
-        // CREATE PROFILE
-        // =====================================================
 
         public async Task<JobSeekerProfile?> CreateAsync(
             JobSeekerProfile profile)
@@ -26,12 +23,10 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
 
             try
             {
-                // Generate Profile ID
+                
                 profile.JobSeekerProfileId = Guid.NewGuid();
 
-                // Skill, Qualification, Experience and Location
-                // are already created by Admin.
-                // Only their existing IDs are saved in JobSeekerProfile.
+                
 
                 await context.JobSeekerProfiles.AddAsync(profile);
 
@@ -49,10 +44,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
         }
 
 
-        // =====================================================
-        // UPDATE PROFILE
-        // =====================================================
-
+       
         public async Task<JobSeekerProfile?> UpdateProfile(
             Guid id,
             JobSeekerProfile jobseekerprofile)
@@ -73,9 +65,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                     return null;
 
 
-                // =================================================
-                // PROFILE DETAILS
-                // =================================================
+                
 
                 existingProfile.About =
                     jobseekerprofile.About;
@@ -84,9 +74,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                     jobseekerprofile.ResumeUrl;
 
 
-                // =================================================
-                // SYSTEM USER DETAILS
-                // =================================================
+               
 
                 if (existingProfile.JobSeeker?.SystemUser != null &&
                     jobseekerprofile.JobSeeker?.SystemUser != null)
@@ -105,14 +93,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                 }
 
 
-                // =================================================
-                // ADMIN MASTER DATA
-                // =================================================
-                // We are NOT updating Skill, Qualification,
-                // Experience or Location tables.
-                //
-                // We only change the selected IDs.
-                // =================================================
+               
 
                 existingProfile.SkillId =
                     jobseekerprofile.SkillId;
@@ -141,9 +122,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
         }
 
 
-        // =====================================================
-        // DELETE PROFILE
-        // =====================================================
+       
 
         public async Task<bool> DeleteProfile(Guid profileId)
         {
@@ -161,16 +140,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                     return false;
 
 
-                // ONLY DELETE JOB SEEKER PROFILE
-                //
-                // DO NOT DELETE:
-                // Skill
-                // Qualification
-                // Experience
-                // Location
-                // JobSeeker
-                // SystemUser
-                // AuthUser
+                
 
                 context.JobSeekerProfiles.Remove(profile);
 
@@ -188,9 +158,6 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
         }
 
 
-        // =====================================================
-        // GET PROFILE BY PROFILE ID
-        // =====================================================
 
         public async Task<JobSeekerProfile?> GetProfileById(Guid id)
         {
@@ -212,9 +179,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
         }
 
 
-        // =====================================================
-        // GET JOB SEEKER BY SYSTEM USER ID
-        // =====================================================
+        
 
         public async Task<JobSeeker?> GetJobSeekerBySystemUserId(
             Guid systemUserId)
@@ -226,9 +191,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
         }
 
 
-        // =====================================================
-        // GET ALL SKILLS
-        // =====================================================
+       
 
         public async Task<List<Skill>> GetAllSkills()
         {
@@ -238,10 +201,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
         }
 
 
-        // =====================================================
-        // GET ALL QUALIFICATIONS
-        // =====================================================
-
+      
         public async Task<List<Qualification>> GetAllQualifications()
         {
             return await context.Qualifications
@@ -250,10 +210,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
         }
 
 
-        // =====================================================
-        // GET ALL EXPERIENCES
-        // =====================================================
-
+       
         public async Task<List<Experience>> GetAllExperiences()
         {
             return await context.Experiences
@@ -262,6 +219,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
         }
 
 
+       
         // =====================================================
         // GET ALL LOCATIONS
         // =====================================================
@@ -272,6 +230,103 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                 .AsNoTracking()
                 .ToListAsync();
         }
+        public async Task<JobSeekerProfile?> GetProfileBySystemUserId(
+    Guid systemUserId)
+        {
+            return await context.JobSeekerProfiles
+                .Include(x => x.JobSeeker)
+                    .ThenInclude(x => x.SystemUser)
+
+                .Include(x => x.Skill)
+
+                .Include(x => x.Qualification)
+
+                .Include(x => x.Experience)
+
+                .Include(x => x.Location)
+
+                .FirstOrDefaultAsync(x =>
+                    x.JobSeeker.SystemUserId == systemUserId);
+        }
+        public async Task<bool> DeleteJobSeekerAccount(Guid systemUserId)
+        {
+            await using var transaction =
+                await context.Database.BeginTransactionAsync();
+
+            try
+            {
+                
+                var jobSeeker = await context.JobSeekers
+                    .FirstOrDefaultAsync(x => x.SystemUserId == systemUserId);
+
+                if (jobSeeker == null)
+                {
+                    return false;
+                }
+
+                var profile = await context.JobSeekerProfiles
+                    .FirstOrDefaultAsync(x => x.JobSeekerId == jobSeeker.JobSeekerId);
+
+                if (profile != null)
+                {
+                    
+                    var savedJobs = await context.SavedJobs
+                        .Where(x => x.JobSeekerProfileId == profile.JobSeekerProfileId)
+                        .ToListAsync();
+
+                    if (savedJobs.Any())
+                    {
+                        context.SavedJobs.RemoveRange(savedJobs);
+                    }
+
+                 
+                    var appliedJobs = await context.AppliedJobs
+                        .Where(x => x.JobSeekerProfileId == profile.JobSeekerProfileId)
+                        .ToListAsync();
+
+                    if (appliedJobs.Any())
+                    {
+                        context.AppliedJobs.RemoveRange(appliedJobs);
+                    }
+
+                   
+                    context.JobSeekerProfiles.Remove(profile);
+                }
+
+               
+                var authUser = await context.AuthUsers
+                    .FirstOrDefaultAsync(x => x.SystemUserId == systemUserId);
+
+                if (authUser != null)
+                {
+                    context.AuthUsers.Remove(authUser);
+                }
+
+               
+                context.JobSeekers.Remove(jobSeeker);
+
+              
+                var systemUser = await context.SystemUsers
+                    .FirstOrDefaultAsync(x => x.Id == systemUserId);
+
+                if (systemUser != null)
+                {
+                    context.SystemUsers.Remove(systemUser);
+                }
+
+                
+                await context.SaveChangesAsync();
+
+              
+                await transaction.CommitAsync();
+
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         public async Task<IEnumerable<JobSeekerProfile>> GetAllJobSeekersAsync()
         {
             var jobseekers = await context.JobSeekerProfiles.

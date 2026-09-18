@@ -67,6 +67,14 @@ namespace Domain.Services.Authentication.Service
         {
                return await _authRepository.LoginAsync(email, password);
         }
+        public async Task LogoutAsync(string token)
+        {
+            await _authRepository.RevokeTokenAsync(token);
+        }
 
+        public async Task<bool> IsTokenRevokedAsync(string token)
+        {
+            return await _authRepository.IsTokenRevokedAsync(token);
+        }
     }
 }

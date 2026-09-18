@@ -65,17 +65,33 @@ namespace Job_Portal_System.API.JobSeekeerController
                 message = "Profile created successfully"
             });
         }
-        
+
         [HttpGet]
-        [Route("GetProfile/{id}")]
-        public async Task<IActionResult> GetProfile(Guid id)
+        [Route("GetProfile")]
+        public async Task<IActionResult> GetProfile()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
 
             if (userId == null)
-                return Unauthorized();
+            {
+                return Unauthorized(new
+                {
+                    message = "User ID not found in token"
+                });
+            }
 
-            var result = await crudservice.GetProfileById(id);
+            if (!Guid.TryParse(userId, out Guid systemUserId))
+            {
+                return Unauthorized(new
+                {
+                    message = "Invalid User ID"
+                });
+            }
+
+            var result =
+                await crudservice.GetProfileBySystemUserId(
+                    systemUserId);
 
             if (result == null)
             {
@@ -85,20 +101,33 @@ namespace Job_Portal_System.API.JobSeekeerController
                 });
             }
 
-            return Ok(result);
+            var response =
+                mapper.Map<Getprofileresponse>(result);
+
+            return Ok(response);
         }
         [HttpPut]
-        [Route("UpdateProfile/{id}")]
+        [Route("UpdateProfile")]
         public async Task<IActionResult> UpdateProfile(
-    Guid id,
-    [FromBody] Updaterequest request)
+     [FromBody] Updaterequest request)
         {
             var userId = User.FindFirstValue(
                 ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
-                return Unauthorized();
+                return Unauthorized(new
+                {
+                    message = "User ID not found in token"
+                });
+            }
+
+            if (!Guid.TryParse(userId, out Guid systemUserId))
+            {
+                return Unauthorized(new
+                {
+                    message = "Invalid User ID"
+                });
             }
 
             var jobseekerprofile =
@@ -106,7 +135,7 @@ namespace Job_Portal_System.API.JobSeekeerController
 
             var result =
                 await crudservice.UpdateProfile(
-                    id,
+                    systemUserId,
                     jobseekerprofile);
 
             if (result == null)
@@ -186,6 +215,45 @@ namespace Job_Portal_System.API.JobSeekeerController
             var result = await crudservice.GetAllLocations();
 
             return Ok(result);
+        }
+        [HttpDelete]
+        [Route("DeleteAccount")]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var userId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return Unauthorized(new
+                {
+                    message = "User ID not found in token"
+                });
+            }
+
+            if (!Guid.TryParse(userId, out Guid systemUserId))
+            {
+                return Unauthorized(new
+                {
+                    message = "Invalid User ID"
+                });
+            }
+
+            var result =
+                await crudservice.DeleteJobSeekerAccount(systemUserId);
+
+            if (!result)
+            {
+                return NotFound(new
+                {
+                    message = "JobSeeker account not found"
+                });
+            }
+
+            return Ok(new
+            {
+                message = "JobSeeker account deleted successfully"
+            });
         }
     }
 }

@@ -8,9 +8,8 @@ namespace Domain.Enum
 {
     public  enum Role
     {
-        Admin = 1,
-        JobProvider=2,
-        JobSeeker = 3
-            
+        JobSeeker = 1,
+        JobProvider = 2,
+        Admin = 3
     }
 }

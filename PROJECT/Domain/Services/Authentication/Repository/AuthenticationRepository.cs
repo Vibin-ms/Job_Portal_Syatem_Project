@@ -44,11 +44,11 @@ namespace Domain.Services.Authentication.Repository
                 CreatedDate = DateTime.UtcNow
             };
 
-         
+
             await _context.SystemUsers.AddAsync(systemUser);
             await _context.SaveChangesAsync();
 
-           
+
             if (systemUser.Roles == Role.JobSeeker)
             {
                 var jobSeeker = new JobSeeker
@@ -70,7 +70,7 @@ namespace Domain.Services.Authentication.Repository
                 await _context.JobProviders.AddAsync(jobProvider);
             }
 
-           
+
             await _context.SaveChangesAsync();
 
             return systemUser;
@@ -136,7 +136,7 @@ namespace Domain.Services.Authentication.Repository
             return true;
         }
 
-        public async Task<AuthUser?> LoginAsync(string email,string password)
+        public async Task<AuthUser?> LoginAsync(string email, string password)
         {
             var authUser = await _context.AuthUsers
                 .Include(x => x.SystemUser)
@@ -153,7 +153,7 @@ namespace Domain.Services.Authentication.Repository
                 return null;
             }
 
-            bool passwordValid =BCrypt.Net.BCrypt.Verify(password,authUser.PasswordHash);
+            bool passwordValid = BCrypt.Net.BCrypt.Verify(password, authUser.PasswordHash);
 
             if (!passwordValid)
             {
@@ -162,6 +162,24 @@ namespace Domain.Services.Authentication.Repository
 
             return authUser;
         }
+        private static readonly HashSet<string> RevokedTokens = new();
 
+        public Task RevokeTokenAsync(string token)
+        {
+            lock (RevokedTokens)
+            {
+                RevokedTokens.Add(token);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> IsTokenRevokedAsync(string token)
+        {
+            lock (RevokedTokens)
+            {
+                return Task.FromResult(RevokedTokens.Contains(token));
+            }
+        }
     }
-}      
+}  

@@ -12,5 +12,8 @@ namespace Domain.Helpers.EmailInterface
            string email,
            string firstName,
            string role);
+
+        Task SendCompanyAcceptedEmailAsync(string email, string companyname);
+        Task sendCompanyRejectedEmailAsync(string email, string companyname);
     }
 }

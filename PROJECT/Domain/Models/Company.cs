@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Models;
@@ -21,11 +22,16 @@ public partial class Company
 
     public string Phone { get; set; } = null!;
 
-    public virtual ICollection<CompanyUser> CompanyUsers { get; set; } = new List<CompanyUser>();
+    public Guid? JobProviderId { get; set; }
 
+    public CompanyStatus? Status { get; set; }
+
+    public virtual ICollection<CompanyUser> CompanyUsers { get; set; } = new List<CompanyUser>();
     public virtual Industry Industry { get; set; } = null!;
 
     public virtual ICollection<JobPost> JobPosts { get; set; } = new List<JobPost>();
 
     public virtual Location Location { get; set; } = null!;
+
+    public virtual JobProvider? JobProvider { get; set; }
 }

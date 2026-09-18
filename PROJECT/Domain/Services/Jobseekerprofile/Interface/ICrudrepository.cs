@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Services.Jobseekerprofile.Interface
 {
-  public  interface ICrudrepository
+    public interface ICrudrepository
     {
 
         Task<JobSeeker?> GetJobSeekerBySystemUserId(
@@ -29,7 +29,7 @@ namespace Domain.Services.Jobseekerprofile.Interface
             Guid id);
 
 
-       
+
 
         Task<List<Skill>> GetAllSkills();
 
@@ -37,6 +37,8 @@ namespace Domain.Services.Jobseekerprofile.Interface
 
         Task<List<Experience>> GetAllExperiences();
 
-        Task<List<Location>> GetAllLocations();
+        Task<List<Domain.Models.Location>> GetAllLocations();
+
+        Task<IEnumerable<JobSeekerProfile>> GetAllJobSeekersAsync();
     }
 }

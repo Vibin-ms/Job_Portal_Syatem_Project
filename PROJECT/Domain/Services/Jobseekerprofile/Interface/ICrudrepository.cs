@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Services.Jobseekerprofile.Interface
 {
-  public  interface ICrudrepository
+    public interface ICrudrepository
     {
 
         Task<JobSeeker?> GetJobSeekerBySystemUserId(

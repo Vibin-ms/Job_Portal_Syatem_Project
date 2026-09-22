@@ -177,12 +177,23 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
        
         
         public async Task<List<Domain.Models.Location>> GetAllLocations()
+        // =====================================================
+        // GET ALL LOCATIONS
+        // =====================================================
+
+        public async Task<List<Domain.Models.Location>> GetAllLocations()
         {
             return await repository.GetAllLocations();
         }
         public async Task<bool> DeleteJobSeekerAccount(Guid systemUserId)
         {
             return await repository.DeleteJobSeekerAccount(systemUserId);
+        }
+
+        public async Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync()
+        {
+            var jobseeker = await repository.GetAllJobSeekersAsync();
+            return mapper.Map<IEnumerable<JobSeekerResponseDTO>>(jobseeker);
         }
     }
 }

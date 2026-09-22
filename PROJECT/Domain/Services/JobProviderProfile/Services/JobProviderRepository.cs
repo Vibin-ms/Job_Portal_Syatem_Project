@@ -34,6 +34,8 @@ namespace Domain.Services.JobProviderProfile.Services
             
            var jobs=await appDbContext.JobPosts.Where(x=>x.JobProviderId==id).ToListAsync();
             appDbContext.JobPosts.RemoveRange(jobs);
+            var company = await appDbContext.Companies.Where(x => x.JobProviderId == id).ToListAsync();
+            appDbContext .Companies.RemoveRange(company);
 
             appDbContext.JobProviders.Remove(provider);
 

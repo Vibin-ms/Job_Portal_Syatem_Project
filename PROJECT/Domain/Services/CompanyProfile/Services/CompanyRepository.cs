@@ -31,6 +31,9 @@ namespace Domain.Services.CompanyProfile.Services
             {
                 return false;
             }
+            var companyid = comapny.CompanyId;
+            var jobs=await appDbContext.JobPosts.Where(x=>x.CompanyId == companyid).ToListAsync();
+            appDbContext.JobPosts.RemoveRange(jobs);
             appDbContext.Companies.Remove(comapny);
             await appDbContext.SaveChangesAsync();
             return true;

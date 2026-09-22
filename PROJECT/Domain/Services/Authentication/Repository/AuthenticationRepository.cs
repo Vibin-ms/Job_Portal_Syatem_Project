@@ -31,6 +31,13 @@ namespace Domain.Services.Authentication.Repository
             {
                 return null;
             }
+            if (user.Roles == Role.Admin)
+            {
+                throw new InvalidOperationException(
+                    "Admin registration is not allowed."
+                );
+            }
+
 
             var systemUser = new SystemUser
             {

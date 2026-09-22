@@ -174,9 +174,7 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-       
-        
-        public async Task<List<Domain.Models.Location>> GetAllLocations()
+<<<<<<<<< Temporary merge branch 1
         // =====================================================
         // GET ALL LOCATIONS
         // =====================================================
@@ -185,10 +183,7 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         {
             return await repository.GetAllLocations();
         }
-        public async Task<bool> DeleteJobSeekerAccount(Guid systemUserId)
-        {
-            return await repository.DeleteJobSeekerAccount(systemUserId);
-        }
+<<<<<<<<< Temporary merge branch 1
 
         public async Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync()
         {

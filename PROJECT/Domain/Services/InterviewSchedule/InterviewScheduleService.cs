@@ -1,13 +1,13 @@
 using AutoMapper;
 using Domain.Enum;
-using Domain.Services.InterviewSchedule.Dto;
-using Domain.Services.InterviewSchedule.Interface;
+using Domain.Services.InterviewSchedules.Dto;
+using Domain.Services.InterviewSchedules.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Domain.Services.InterviewSchedule
+namespace Domain.Services.InterviewSchedules.Services
 {
     public class InterviewScheduleService : IInterviewScheduleService
     {

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Domain.Services.InterviewSchedule.Interface
+namespace Domain.Services.InterviewSchedules.Interface
 {
     public interface IInterviewScheduleRepo
     {

@@ -1,13 +1,13 @@
 using Domain.Data;
 using Domain.Models;
-using Domain.Services.InterviewSchedule.Interface;
+using Domain.Services.InterviewSchedules.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Domain.Services.InterviewSchedule
+namespace Domain.Services.InterviewSchedules.Services
 {
     public class InterviewScheduleRepository : IInterviewScheduleRepo
     {

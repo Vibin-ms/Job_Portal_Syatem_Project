@@ -1,6 +1,6 @@
 using System;
 
-namespace Domain.Services.JobApplication.Dto
+namespace Domain.Services.JobApplications.DTO
 {
     public class JobApplicationDto
     {
@@ -21,5 +21,22 @@ namespace Domain.Services.JobApplication.Dto
     public class UpdateApplicationStatusDto
     {
         public int Status { get; set; }
+    }
+
+    public class ApplicationDTO
+    {
+        public Guid JobApplicationId { get; set; }
+        public string JobTitle { get; set; } = null!;
+        public string JobDescription { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Phone { get; set; } = null!;
+        public string? ResumeUrl { get; set; }
+        public string? SkillName { get; set; }
+        public string? QualificationName { get; set; }
+        public string? ExperienceName { get; set; }
+        public string ApplicationStatus { get; set; } = null!;
+        public DateTime ApplicationDate { get; set; }
     }
 }

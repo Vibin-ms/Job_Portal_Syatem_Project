@@ -1,9 +1,9 @@
-using Domain.Services.InterviewSchedule.Dto;
+using Domain.Services.InterviewSchedules.Dto;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Domain.Services.InterviewSchedule.Interface
+namespace Domain.Services.InterviewSchedules.Interface
 {
     public interface IInterviewScheduleService
     {

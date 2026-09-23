@@ -23,10 +23,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
 
             try
             {
-                
                 profile.JobSeekerProfileId = Guid.NewGuid();
-
-                
 
                 await context.JobSeekerProfiles.AddAsync(profile);
 
@@ -34,7 +31,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
 
                 await transaction.CommitAsync();
 
-                return profile;
+                return await GetProfileById(profile.JobSeekerProfileId);
             }
             catch
             {
@@ -65,16 +62,12 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                     return null;
 
 
-                
-
                 existingProfile.About =
                     jobseekerprofile.About;
 
                 existingProfile.ResumeUrl =
                     jobseekerprofile.ResumeUrl;
 
-
-               
 
                 if (existingProfile.JobSeeker?.SystemUser != null &&
                     jobseekerprofile.JobSeeker?.SystemUser != null)
@@ -93,8 +86,6 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                 }
 
 
-               
-
                 existingProfile.SkillId =
                     jobseekerprofile.SkillId;
 
@@ -112,7 +103,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
 
                 await transaction.CommitAsync();
 
-                return existingProfile;
+                return await GetProfileById(id);
             }
             catch
             {
@@ -139,8 +130,31 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                 if (profile == null)
                     return false;
 
+                var savedJobs = await context.SavedJobs
+                    .Where(x => x.JobSeekerProfileId == profileId)
+                    .ToListAsync();
+                if (savedJobs.Any()) context.SavedJobs.RemoveRange(savedJobs);
 
-                
+                var appliedJobs = await context.AppliedJobs
+                    .Where(x => x.JobSeekerProfileId == profileId)
+                    .ToListAsync();
+                if (appliedJobs.Any())
+                {
+                    var appliedJobIds = appliedJobs.Select(x => x.AppliedJobId).ToList();
+                    var jobApplications = await context.JobApplications
+                        .Where(x => appliedJobIds.Contains(x.AppliedJobId))
+                        .ToListAsync();
+                    if (jobApplications.Any())
+                    {
+                        var jobAppIds = jobApplications.Select(x => x.JobApplicationId).ToList();
+                        var interviewSchedules = await context.InterviewSchedules
+                            .Where(x => jobAppIds.Contains(x.JobApplicationId))
+                            .ToListAsync();
+                        if (interviewSchedules.Any()) context.InterviewSchedules.RemoveRange(interviewSchedules);
+                        context.JobApplications.RemoveRange(jobApplications);
+                    }
+                    context.AppliedJobs.RemoveRange(appliedJobs);
+                }
 
                 context.JobSeekerProfiles.Remove(profile);
 
@@ -286,6 +300,19 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
 
                     if (appliedJobs.Any())
                     {
+                        var appliedJobIds = appliedJobs.Select(x => x.AppliedJobId).ToList();
+                        var jobApplications = await context.JobApplications
+                            .Where(x => appliedJobIds.Contains(x.AppliedJobId))
+                            .ToListAsync();
+                        if (jobApplications.Any())
+                        {
+                            var jobAppIds = jobApplications.Select(x => x.JobApplicationId).ToList();
+                            var interviewSchedules = await context.InterviewSchedules
+                                .Where(x => jobAppIds.Contains(x.JobApplicationId))
+                                .ToListAsync();
+                            if (interviewSchedules.Any()) context.InterviewSchedules.RemoveRange(interviewSchedules);
+                            context.JobApplications.RemoveRange(jobApplications);
+                        }
                         context.AppliedJobs.RemoveRange(appliedJobs);
                     }
 

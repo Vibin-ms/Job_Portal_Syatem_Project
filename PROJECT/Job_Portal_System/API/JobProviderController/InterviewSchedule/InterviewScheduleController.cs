@@ -1,6 +1,6 @@
 using AutoMapper;
-using Domain.Services.InterviewSchedule.Dto;
-using Domain.Services.InterviewSchedule.Interface;
+using Domain.Services.InterviewSchedules.Dto;
+using Domain.Services.InterviewSchedules.Interface;
 using Job_Portal_System.API.JobProviderController.InterviewSchedule.Request___Response_Body;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

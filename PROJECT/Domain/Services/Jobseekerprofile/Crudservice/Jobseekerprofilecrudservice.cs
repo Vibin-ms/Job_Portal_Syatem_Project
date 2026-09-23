@@ -1,3 +1,4 @@
+
 using AutoMapper;
 using Domain.Models;
 using Domain.Services.Jobseekerprofile.Dto;
@@ -31,6 +32,20 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
 
             if (jobSeeker == null)
                 return null;
+
+            var existingProfile =
+                await repository.GetProfileBySystemUserId(systemUserId);
+            if (existingProfile != null)
+            {
+                if (existingProfile.JobSeeker?.SystemUser != null)
+                {
+                    dto.FirstName = existingProfile.JobSeeker.SystemUser.FirstName;
+                    dto.LastName = existingProfile.JobSeeker.SystemUser.LastName;
+                    dto.Email = existingProfile.JobSeeker.SystemUser.Email;
+                    dto.Phone = existingProfile.JobSeeker.SystemUser.Phone;
+                }
+                return await UpdateProfile(systemUserId, dto);
+            }
 
 
             var profile = new JobSeekerProfile

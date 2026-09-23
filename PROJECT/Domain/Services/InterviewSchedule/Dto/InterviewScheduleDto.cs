@@ -1,6 +1,6 @@
 using System;
 
-namespace Domain.Services.InterviewSchedule.Dto
+namespace Domain.Services.InterviewSchedules.Dto
 {
     public class InterviewScheduleDto
     {

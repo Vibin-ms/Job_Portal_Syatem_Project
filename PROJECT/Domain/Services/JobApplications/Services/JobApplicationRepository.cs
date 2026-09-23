@@ -1,15 +1,15 @@
 using Domain.Data;
 using Domain.Models;
-using Domain.Services.JobApplication.Interface;
+using Domain.Services.JobApplications.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Domain.Services.JobApplication
+namespace Domain.Services.JobApplications.Services
 {
-    public class JobApplicationRepository : IJobApplicationRepo
+    public class JobApplicationRepository : IJobApplicationRepository, IApplicationRepository
     {
         private readonly AppDbContext _context;
 
@@ -67,6 +67,19 @@ namespace Domain.Services.JobApplication
         {
             _context.JobApplications.Update(application);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Models.JobApplication>> GetApplicationsByJobPostAsync(Guid jobId)
+        {
+            return await _context.JobApplications
+                .Include(x => x.AppliedJob.JobSeekerProfile.JobSeeker.SystemUser)
+                .Include(x => x.AppliedJob.JobSeekerProfile.Skill)
+                .Include(x => x.AppliedJob.JobSeekerProfile.Qualification)
+                .Include(x => x.AppliedJob.JobSeekerProfile.Experience)
+                .Include(x => x.AppliedJob.JobPost)
+                .Include(x => x.AppliedJob.JobSeekerProfile)
+                .Where(x => x.JobPostId == jobId)
+                .ToListAsync();
         }
     }
 }

@@ -1,20 +1,20 @@
 using AutoMapper;
 using Domain.Enum;
-using Domain.Services.JobApplication.Dto;
-using Domain.Services.JobApplication.Interface;
+using Domain.Services.JobApplications.DTO;
+using Domain.Services.JobApplications.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Domain.Services.JobApplication
+namespace Domain.Services.JobApplications.Services
 {
-    public class JobApplicationService : IJobApplicationService
+    public class JobApplicationService : IJobApplicationService, IApplicationServices
     {
-        private readonly IJobApplicationRepo repository;
+        private readonly IJobApplicationRepository repository;
         private readonly IMapper mapper;
 
-        public JobApplicationService(IJobApplicationRepo _repository, IMapper _mapper)
+        public JobApplicationService(IJobApplicationRepository _repository, IMapper _mapper)
         {
             repository = _repository;
             mapper = _mapper;
@@ -62,6 +62,12 @@ namespace Domain.Services.JobApplication
             await repository.UpdateApplicationAsync(app);
 
             return mapper.Map<JobApplicationDto>(app);
+        }
+
+        public async Task<IEnumerable<ApplicationDTO>> GetApplicationsByJobPostAsync(Guid jobId)
+        {
+            var applications = await repository.GetApplicationsByJobPostAsync(jobId);
+            return mapper.Map<IEnumerable<ApplicationDTO>>(applications);
         }
     }
 }

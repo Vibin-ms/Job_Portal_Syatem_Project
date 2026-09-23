@@ -1,6 +1,6 @@
 using AutoMapper;
-using Domain.Services.JobApplication.Dto;
-using Domain.Services.JobApplication.Interface;
+using Domain.Services.JobApplications.DTO;
+using Domain.Services.JobApplications.Interface;
 using Job_Portal_System.API.JobProviderController.JobApplication.Request___Response_Body;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

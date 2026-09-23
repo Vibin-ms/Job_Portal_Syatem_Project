@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Domain.Models;
 using Domain.Services.Jobseekerprofile.Dto;
 using Domain.Services.Jobseekerprofile.Interface;
@@ -174,7 +174,8 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-<<<<<<<<< Temporary merge branch 1
+       
+        
         // =====================================================
         // GET ALL LOCATIONS
         // =====================================================
@@ -183,7 +184,10 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         {
             return await repository.GetAllLocations();
         }
-<<<<<<<<< Temporary merge branch 1
+        public async Task<bool> DeleteJobSeekerAccount(Guid systemUserId)
+        {
+            return await repository.DeleteJobSeekerAccount(systemUserId);
+        }
 
         public async Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync()
         {

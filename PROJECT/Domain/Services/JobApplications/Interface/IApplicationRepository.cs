@@ -1,4 +1,4 @@
-﻿using Domain.Models;
+using Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,6 @@ namespace Domain.Services.JobApplications.Interface
 {
     public interface IApplicationRepository
     {
-        Task<IEnumerable<JobApplication>>GetApplicationsByJobPostAsync(Guid jobId);
+        Task<IEnumerable<Domain.Models.JobApplication>> GetApplicationsByJobPostAsync(Guid jobId);
     }
 }

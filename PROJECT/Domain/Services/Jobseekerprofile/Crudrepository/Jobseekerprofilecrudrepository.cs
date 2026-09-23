@@ -1,4 +1,4 @@
-﻿using Domain.Data;
+using Domain.Data;
 using Domain.Models;
 using Domain.Services.Jobseekerprofile.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -219,7 +219,7 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
         }
 
 
-<<<<<<<<< Temporary merge branch 1
+       
         // =====================================================
         // GET ALL LOCATIONS
         // =====================================================
@@ -327,7 +327,14 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                 await transaction.RollbackAsync();
                 throw;
             }
->>>>>>>>> Temporary merge branch 2
+        }
+
+        public async Task<IEnumerable<JobSeekerProfile>> GetAllJobSeekersAsync()
+        {
+            var jobseekers = await context.JobSeekerProfiles.
+                Include(x => x.JobSeeker).ThenInclude(x => x.SystemUser).Include(x=>x.Skill).
+                Include(x=>x.Qualification).Include(x=>x.Experience).Include(x=>x.Location).ToListAsync();
+            return jobseekers;
         }
     }
 }

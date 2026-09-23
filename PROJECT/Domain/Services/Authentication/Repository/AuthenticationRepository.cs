@@ -1,4 +1,4 @@
-﻿using Domain.Data;
+using Domain.Data;
 using Domain.Enum;
 using Domain.Models;
 using Domain.Services.Authentication.Interface;
@@ -31,13 +31,6 @@ namespace Domain.Services.Authentication.Repository
             {
                 return null;
             }
-            if (user.Roles == Role.Admin)
-            {
-                throw new InvalidOperationException(
-                    "Admin registration is not allowed."
-                );
-            }
-
 
             var systemUser = new SystemUser
             {
@@ -68,7 +61,7 @@ namespace Domain.Services.Authentication.Repository
             }
             else if (systemUser.Roles == Role.JobProvider)
             {
-                var jobProvider = new JobProvider
+                var jobProvider = new Domain.Models.JobProvider
                 {
                     JobProviderId = Guid.NewGuid(),
                     SystemUserId = systemUser.Id
@@ -131,7 +124,7 @@ namespace Domain.Services.Authentication.Repository
 
                 SystemUserId = systemUser.Id,
 
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password)
+                PasswordHash = global::BCrypt.Net.BCrypt.HashPassword(password)
             };
 
             await _context.AuthUsers.AddAsync(authUser);
@@ -160,7 +153,7 @@ namespace Domain.Services.Authentication.Repository
                 return null;
             }
 
-            bool passwordValid = BCrypt.Net.BCrypt.Verify(password, authUser.PasswordHash);
+            bool passwordValid = global::BCrypt.Net.BCrypt.Verify(password, authUser.PasswordHash);
 
             if (!passwordValid)
             {

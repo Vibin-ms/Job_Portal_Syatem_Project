@@ -1,4 +1,4 @@
-﻿using Domain.Data;
+using Domain.Data;
 using Domain.Models;
 using Domain.Services.JobApplications.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,7 @@ namespace Domain.Services.JobApplications.Services
         {
             dbContext = _dbContext;
         }
-        public async Task<IEnumerable<JobApplication>> GetApplicationsByJobPostAsync(Guid jobId)
+        public async Task<IEnumerable<Domain.Models.JobApplication>> GetApplicationsByJobPostAsync(Guid jobId)
         {
             var application=await dbContext.JobApplications.Include(x=>x.AppliedJob.JobSeekerProfile.JobSeeker.SystemUser).Include(x=>x.AppliedJob.JobSeekerProfile.Skill)
                 .Include(x=>x.AppliedJob.JobSeekerProfile.Qualification).Include(x=>x.AppliedJob.JobSeekerProfile.Experience).Include(x=>x.AppliedJob.JobPost).Include(x=>x.AppliedJob.JobSeekerProfile)

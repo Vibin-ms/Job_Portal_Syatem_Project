@@ -1,4 +1,4 @@
-﻿using Domain.Data;
+using Domain.Data;
 using Domain.Helpers.EmailInterface;
 using Domain.Helpers.EmailServicefolder;
 using Domain.Services.AcceptORRejectCompany.Interface;
@@ -14,12 +14,19 @@ using Domain.Services.Experiences.Interface;
 using Domain.Services.Experiences.services;
 using Domain.Services.Industrys.Interface;
 using Domain.Services.Industrys.services;
+using Domain.Services.InterviewSchedule;
+using Domain.Services.InterviewSchedule.Interface;
+using Domain.Services.JobApplication;
+using Domain.Services.JobApplication.Interface;
 using Domain.Services.JobApplications.Interface;
 using Domain.Services.JobApplications.Services;
 using Domain.Services.JobCategorys.Interface;
 using Domain.Services.JobCategorys.Services;
+using Domain.Services.JobPost;
 using Domain.Services.JobPost.Interface;
 using Domain.Services.JobPost.Services;
+using Domain.Services.JobProvider;
+using Domain.Services.JobProvider.Interface;
 using Domain.Services.JobProviderProfile.Interface;
 using Domain.Services.JobProviderProfile.Services;
 using Domain.Services.Jobseekerprofile.Crudrepository;
@@ -45,14 +52,15 @@ namespace Job_Portal_System.Extention___Helpers
 
             services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
             //Authentication and Authorization//
-            services.AddScoped<IAuthrepository,AuthenticationRepository>();
+            services.AddScoped<IAuthrepository, AuthenticationRepository>();
             services.AddScoped<IAuthservice, Authenticationservice>();
             services.AddScoped<IJwtservice, Jwtservice>();
             services.AddScoped<IEmailservice, Emailserviceclass>();
-            services.AddDbContext<AppDbContext>(cfg =>cfg.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>(cfg => cfg.UseSqlServer(config.GetConnectionString("DefaultConnection")));
             //Admin Part//
             services.AddScoped<ISkillRepository, SkillRepository>();
             services.AddScoped<ISkillServices, SkillServices>();
+
             services.AddScoped<ILocationRepository, LocationRepository>();
             services.AddScoped<ILocationServices, LocationServices>();
 
@@ -74,6 +82,24 @@ namespace Job_Portal_System.Extention___Helpers
             services.AddScoped<IAcceptORRejectRepository, AcceptORRejectRepository>();
             services.AddScoped<IAccpetORRejectServices, AcceptORRejectServices>();
 
+            services.AddScoped<IJobProviderRepository, Domain.Services.JobProviderProfile.Services.JobProviderRepository>();
+            services.AddScoped<IJobProviderServices, Domain.Services.JobProviderProfile.Services.JobProviderServices>();
+
+            services.AddScoped<ICompanyRepository, CompanyRepository>();
+            services.AddScoped<ICompanySerices, CompanyServices>();
+
+            services.AddScoped<IApplicationRepository, ApplicationRepository>();
+            services.AddScoped<IApplicationServices, ApplicationServices>();
+
+            services.AddScoped<IJobPostRepository, Domain.Services.JobPost.Services.JobPostRepository>();
+            services.AddScoped<IJobPostServices, Domain.Services.JobPost.Services.JobPostServices>();
+
+
+
+
+
+
+
 
 
 
@@ -86,18 +112,21 @@ namespace Job_Portal_System.Extention___Helpers
 
 
 
+
             //JobProvider Part//
-            services.AddScoped<IJobProviderRepository, JobProviderRepository>();
-            services.AddScoped<IJobProviderServices, JobProviderServices>();
+            services.AddScoped<IJobProviderRepo, Domain.Services.JobProvider.JobProviderRepository>();
+            services.AddScoped<IJobProviderService, JobProviderService>();
 
-            services.AddScoped<ICompanyRepository, CompanyRepository>();
-            services.AddScoped<ICompanySerices, CompanyServices>();
+            services.AddScoped<IJobPostRepo, Domain.Services.JobPost.JobPostRepository>();
+            services.AddScoped<IJobPostService, JobPostService>();
 
-            services.AddScoped<IJobPostRepository, JobPostRepository>();
-            services.AddScoped<IJobPostServices, JobPostServices>();
+            services.AddScoped<IJobApplicationRepo, JobApplicationRepository>();
+            services.AddScoped<IJobApplicationService, JobApplicationService>();
 
-            services.AddScoped<IApplicationRepository, ApplicationRepository>();
-            services.AddScoped<IApplicationServices, ApplicationServices>();
+            services.AddScoped<IInterviewScheduleRepo, InterviewScheduleRepository>();
+            services.AddScoped<IInterviewScheduleService, InterviewScheduleService>();
+
+
 
             return services;
         }

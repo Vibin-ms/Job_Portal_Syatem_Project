@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
+using Domain.Services.Jobseeker.DTO;
+using Domain.Services.Jobseeker.Interface;
 using Domain.Services.Jobseekerprofile.Dto;
 using Domain.Services.Jobseekerprofile.Interface;
 using Job_Portal_System.API.JobSeekeerController.Request___Response_Body.Jobseekerprofile;
+using Job_Portal_System.API.JobSeekeerController.RequestObject;
+using Job_Portal_System.API.JobSeekeerController.ResponseObject;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +20,12 @@ namespace Job_Portal_System.API.JobSeekeerController
     {
         ICrudservice crudservice;
         IMapper mapper;
-        public JobseekerController(ICrudservice _crudservice, IMapper _mapper)
+        IJobSeekerServices jobSeekerServices;
+        public JobseekerController(ICrudservice _crudservice, IMapper _mapper, IJobSeekerServices _jobSeekerServices)
         {
             crudservice = _crudservice;
             mapper = _mapper;
+            jobSeekerServices = _jobSeekerServices;
         }
         [HttpPost]
         [Route("CreateProfile")]
@@ -255,5 +261,176 @@ namespace Job_Portal_System.API.JobSeekeerController
                 message = "JobSeeker account deleted successfully"
             });
         }
+
+
+
+
+
+
+
+        [HttpGet("GetJobs")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetJobs()
+        {
+            var jobs = await jobSeekerServices.GetAllJobsAsync();
+
+            var response = mapper.Map<List<GetJobsResponse>>(jobs);
+
+            return Ok(response);
+        }
+
+
+        [HttpPost("SearchJob")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SearchJob(
+            [FromBody] SearchJobRequest request)
+        {
+            if (request == null || string.IsNullOrWhiteSpace(request.Name))
+            {
+                return BadRequest(new
+                {
+                    Message = "Job name is required"
+                });
+            }
+
+            var jobs = await jobSeekerServices.SearchJobAsync(request.Name);
+
+            var response = mapper.Map<List<SearchJobResponse>>(jobs);
+
+            return Ok(response);
+        }
+
+
+
+        [HttpPost("ApplyJob")]
+        public async Task<IActionResult> ApplyJob([FromBody] ApplyJobRequest request)
+        {
+            if (request == null || request.JobPostId == Guid.Empty)
+            {
+                return BadRequest(new
+                {
+                    Message = "Valid JobPostId is required"
+                });
+            }
+
+            var dto = mapper.Map<ApplyJobDTO>(request);
+
+            var result = await jobSeekerServices.ApplyJobAsync(dto);
+
+            if (result == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Job does not exist, profile not found, or already applied"
+                });
+            }
+
+            var response = mapper.Map<ApplyJobResponse>(result);
+
+            return Ok(response);
+        }
+
+
+
+        [HttpGet("GetAppliedJobs")]
+        public async Task<IActionResult> GetAppliedJobs()
+        {
+            var appliedJobs =
+                await jobSeekerServices.GetAppliedJobsAsync();
+
+            var response =
+                mapper.Map<List<GetAppliedJobResponse>>(appliedJobs);
+
+            return Ok(response);
+        }
+
+
+
+
+        [HttpPost("SaveJob")]
+        public async Task<IActionResult> SaveJob([FromBody] SaveJobRequest request)
+        {
+            if (request == null || request.JobPostId == Guid.Empty)
+            {
+                return BadRequest(new
+                {
+                    Message = "Valid JobPostId is required"
+                });
+            }
+
+            var dto = mapper.Map<SaveJobDTO>(request);
+
+            var result = await jobSeekerServices.SaveJobAsync(dto);
+
+            if (result == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Job does not exist or already saved"
+                });
+            }
+
+            var response = mapper.Map<SaveJobResponse>(result);
+
+            response.Message = "Job saved successfully";
+
+            return Ok(response);
+        }
+
+
+
+
+
+        [HttpGet("GetSavedJobs")]
+        public async Task<IActionResult> GetSavedJobs()
+        {
+            var savedJobs = await jobSeekerServices.GetSavedJobsAsync();
+
+            var response = mapper.Map<List<GetSavedJobResponse>>(savedJobs);
+
+            return Ok(response);
+        }
+
+
+        [HttpDelete("RemoveSavedJob/{savedJobId:guid}")]
+        public async Task<IActionResult> RemoveSavedJob(Guid savedJobId)
+        {
+            if (savedJobId == Guid.Empty)
+            {
+                return BadRequest(new
+                {
+                    Message = "Valid SavedJobId is required"
+                });
+            }
+
+            var result = await jobSeekerServices.RemoveSavedJobAsync(savedJobId);
+
+            if (!result)
+            {
+                return NotFound(new
+                {
+                    Message = "Saved job not found or does not belong to this JobSeeker"
+                });
+            }
+
+            return Ok(new RemoveSavedJobResponse
+            {
+                Message = "Saved job removed successfully"
+            });
+        }
+
+
+
+        [HttpGet("GetInterviewSchedules")]
+        public async Task<IActionResult> GetInterviewSchedules()
+        {
+            var interviews = await jobSeekerServices.GetInterviewSchedulesAsync();
+
+            var response = mapper.Map<List<GetInterviewScheduleResponse>>(interviews);
+
+            return Ok(response);
+        }
+
+
     }
 }

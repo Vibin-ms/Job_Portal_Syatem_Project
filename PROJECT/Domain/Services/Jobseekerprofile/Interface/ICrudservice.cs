@@ -30,12 +30,9 @@ namespace Domain.Services.Jobseekerprofile.Interface
         Task<List<Experience>> GetAllExperiences();
 
         Task<List<Domain.Models.Location>> GetAllLocations();
-
-
-        Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync();
-
         Task<bool> DeleteJobSeekerAccount(Guid systemUserId);
 
+        Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync();
 
     }
 }

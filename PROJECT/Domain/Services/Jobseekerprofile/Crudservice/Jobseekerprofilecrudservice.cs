@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+
+using AutoMapper;
 using Domain.Models;
 using Domain.Services.Jobseekerprofile.Dto;
 using Domain.Services.Jobseekerprofile.Interface;
@@ -31,6 +32,20 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
 
             if (jobSeeker == null)
                 return null;
+
+            var existingProfile =
+                await repository.GetProfileBySystemUserId(systemUserId);
+            if (existingProfile != null)
+            {
+                if (existingProfile.JobSeeker?.SystemUser != null)
+                {
+                    dto.FirstName = existingProfile.JobSeeker.SystemUser.FirstName;
+                    dto.LastName = existingProfile.JobSeeker.SystemUser.LastName;
+                    dto.Email = existingProfile.JobSeeker.SystemUser.Email;
+                    dto.Phone = existingProfile.JobSeeker.SystemUser.Phone;
+                }
+                return await UpdateProfile(systemUserId, dto);
+            }
 
 
             var profile = new JobSeekerProfile
@@ -174,7 +189,8 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-
+       
+        
         // =====================================================
         // GET ALL LOCATIONS
         // =====================================================
@@ -183,7 +199,10 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         {
             return await repository.GetAllLocations();
         }
-
+        public async Task<bool> DeleteJobSeekerAccount(Guid systemUserId)
+        {
+            return await repository.DeleteJobSeekerAccount(systemUserId);
+        }
 
         public async Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync()
         {

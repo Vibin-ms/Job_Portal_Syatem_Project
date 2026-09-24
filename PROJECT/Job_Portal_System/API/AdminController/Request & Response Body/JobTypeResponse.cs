@@ -1,4 +1,4 @@
-﻿namespace Job_Portal_System.API.AdminController
+namespace Job_Portal_System.API.AdminController
 {
     public class JobTypeResponse
     {

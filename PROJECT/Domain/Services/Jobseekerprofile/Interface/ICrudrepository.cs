@@ -31,8 +31,6 @@ namespace Domain.Services.Jobseekerprofile.Interface
 
 
 
-
-
         Task<List<Skill>> GetAllSkills();
 
         Task<List<Qualification>> GetAllQualifications();
@@ -40,11 +38,8 @@ namespace Domain.Services.Jobseekerprofile.Interface
         Task<List<Experience>> GetAllExperiences();
 
         Task<List<Domain.Models.Location>> GetAllLocations();
-
-
-        Task<IEnumerable<JobSeekerProfile>> GetAllJobSeekersAsync();
-
         Task<bool> DeleteJobSeekerAccount(Guid systemUserId);
 
+        Task<IEnumerable<JobSeekerProfile>> GetAllJobSeekersAsync();
     }
 }

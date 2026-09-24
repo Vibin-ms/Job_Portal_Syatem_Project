@@ -11,11 +11,11 @@ public partial class CompanyUser
 
     public Guid JobProviderId { get; set; }
 
-    public int Roles { get; set; }
-
+    public string Designation { get; set; } = string.Empty;
+    public string RoleInCompany { get; set; } = "Recruiter";
     public int Status { get; set; }
-
-    public DateTime CreatedDate { get; set; }
+    public bool IsActive { get; set; } = true;
+    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
     public virtual Company Company { get; set; } = null!;
 

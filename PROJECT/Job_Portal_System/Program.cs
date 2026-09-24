@@ -1,4 +1,3 @@
-using Domain.Services.Authentication.Interface;
 using Job_Portal_System.Extention___Helpers;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,39 +35,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 )
             )
         };
-
-        options.Events = new JwtBearerEvents
-        {
-            OnTokenValidated = async context =>
-            {
-                var authService =
-                    context.HttpContext.RequestServices
-                        .GetRequiredService<IAuthservice>();
-
-                var authorizationHeader =
-                    context.HttpContext.Request.Headers["Authorization"]
-                        .ToString();
-
-                if (string.IsNullOrEmpty(authorizationHeader))
-                {
-                    context.Fail("Authorization header missing.");
-                    return;
-                }
-
-                var token = authorizationHeader
-                    .Replace("Bearer ", "")
-                    .Trim();
-
-                var isRevoked =
-                    await authService.IsTokenRevokedAsync(token);
-
-                if (isRevoked)
-                {
-                    context.Fail("Token has been revoked.");
-                }
-            }
-        };
-    }); 
+    });
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -99,6 +66,12 @@ builder.Services.AddSwaggerGen(options =>
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<Domain.Data.AppDbContext>();
+    dbContext.Database.EnsureCreated();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

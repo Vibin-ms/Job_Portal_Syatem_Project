@@ -1,5 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Azure;
+using Domain.Enum;
 using Domain.Services.AcceptORRejectCompany.Interface;
 using Domain.Services.CompanyProfile.Interface;
 using Domain.Services.Experiences.DTO;
@@ -45,6 +46,7 @@ namespace Job_Portal_System.API.AdminController
         private readonly IJobProviderServices jobproviderservices;
         private readonly ICompanySerices companyserings;
         private readonly IJobPostServices jobPostServices;
+        private readonly IJobPostService _jobPostService;
         private readonly IAccpetORRejectServices accpetORRejectServices;
         private readonly IApplicationServices applicationservices;
         private readonly IMapper mapper;
@@ -52,7 +54,8 @@ namespace Job_Portal_System.API.AdminController
             IQualificationServices _qualificationservices, IExperienceServices _experienceservices, IIndustryServices _industryServices,
             ICategoryServices _categoryservices, IJobTypeServices _jobtypeservices, ICrudservice _crudservice,
             IJobProviderServices _jobproviderservices, ICompanySerices _companyserings, IJobPostServices _jobPostServices,
-            IAccpetORRejectServices _accpetORRejectServices, IApplicationServices _applicationservices)
+            IAccpetORRejectServices _accpetORRejectServices, IApplicationServices _applicationservices,
+            IJobPostService jobPostService)
         {
             skillservices = _skillservices;
             mapper = _mapper;
@@ -68,6 +71,7 @@ namespace Job_Portal_System.API.AdminController
             jobPostServices = _jobPostServices;
             accpetORRejectServices = _accpetORRejectServices;
             applicationservices = _applicationservices;
+            _jobPostService = jobPostService;
         }
         [HttpPost]
         [Route("AddSkill")]
@@ -995,7 +999,105 @@ namespace Job_Portal_System.API.AdminController
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPut]
+        [Route("AcceptJobPost/{jobpostId:guid}")]
+        public async Task<IActionResult> AcceptJobPost(Guid jobpostId)
+        {
+            try
+            {
+                var accepted = await _jobPostService.ChangeJobStatusByAdminAsync(jobpostId, JobPostStatus.Accepted);
+                if (!accepted)
+                {
+                    return NotFound(new { message = "There is no Job Post with this ID" });
+                }
 
+                return Ok(new { message = "Job Post approved and published successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("RejectJobPost/{jobpostId:guid}")]
+        public async Task<IActionResult> RejectJobPost(Guid jobpostId)
+        {
+            try
+            {
+                var rejected = await _jobPostService.ChangeJobStatusByAdminAsync(jobpostId, JobPostStatus.Rejected);
+                if (!rejected)
+                {
+                    return NotFound(new { message = "There is no Job Post with this ID" });
+                }
+
+                return Ok(new { message = "Job Post rejected successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("GetPendingJobs")]
+        public async Task<IActionResult> GetPendingJobs()
+        {
+            try
+            {
+                var jobs = await _jobPostService.GetAllJobsForAdminAsync(JobPostStatus.Pending);
+                if (jobs == null || !jobs.Any())
+                {
+                    return NotFound(new { message = "There are no pending jobs" });
+                }
+
+                return Ok(jobs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("GetAcceptedJobs")]
+        public async Task<IActionResult> GetAcceptedJobs()
+        {
+            try
+            {
+                var jobs = await _jobPostService.GetAllJobsForAdminAsync(JobPostStatus.Accepted);
+                if (jobs == null || !jobs.Any())
+                {
+                    return NotFound(new { message = "There are no accepted jobs" });
+                }
+
+                return Ok(jobs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("GetRejectedJobs")]
+        public async Task<IActionResult> GetRejectedJobs()
+        {
+            try
+            {
+                var jobs = await _jobPostService.GetAllJobsForAdminAsync(JobPostStatus.Rejected);
+                if (jobs == null || !jobs.Any())
+                {
+                    return NotFound(new { message = "There are no rejected jobs" });
+                }
+
+                return Ok(jobs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
     }
 }

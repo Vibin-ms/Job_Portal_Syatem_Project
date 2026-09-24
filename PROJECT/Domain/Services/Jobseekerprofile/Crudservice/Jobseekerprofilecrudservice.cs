@@ -209,5 +209,9 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
             var jobseeker = await repository.GetAllJobSeekersAsync();
             return mapper.Map<IEnumerable<JobSeekerResponseDTO>>(jobseeker);
         }
+        public async Task<bool> DeleteJobSeekerAccount(Guid systemUserId)
+        {
+            return await repository.DeleteJobSeekerAccount(systemUserId);
+        }
     }
 }

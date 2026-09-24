@@ -363,5 +363,13 @@ namespace Domain.Services.Jobseekerprofile.Crudrepository
                 Include(x=>x.Qualification).Include(x=>x.Experience).Include(x=>x.Location).ToListAsync();
             return jobseekers;
         }
+        public async Task<IEnumerable<JobSeekerProfile>> GetAllJobSeekersAsync()
+        {
+            var jobseekers = await context.JobSeekerProfiles.
+                Include(x => x.JobSeeker).ThenInclude(x => x.SystemUser).Include(x => x.Skill).
+                Include(x => x.Qualification).Include(x => x.Experience).Include(x => x.Location).ToListAsync();
+            return jobseekers;
+        }
+
     }
 }

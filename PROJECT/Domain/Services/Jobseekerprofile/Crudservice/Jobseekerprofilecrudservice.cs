@@ -174,7 +174,7 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         }
 
 
-<<<<<<<<< Temporary merge branch 1
+
         // =====================================================
         // GET ALL LOCATIONS
         // =====================================================
@@ -183,12 +183,16 @@ namespace Domain.Services.Jobseekerprofile.Crudservice
         {
             return await repository.GetAllLocations();
         }
-<<<<<<<<< Temporary merge branch 1
+
 
         public async Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync()
         {
             var jobseeker = await repository.GetAllJobSeekersAsync();
             return mapper.Map<IEnumerable<JobSeekerResponseDTO>>(jobseeker);
+        }
+        public async Task<bool> DeleteJobSeekerAccount(Guid systemUserId)
+        {
+            return await repository.DeleteJobSeekerAccount(systemUserId);
         }
     }
 }

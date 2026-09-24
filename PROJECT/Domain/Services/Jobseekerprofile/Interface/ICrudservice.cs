@@ -30,12 +30,12 @@ namespace Domain.Services.Jobseekerprofile.Interface
         Task<List<Experience>> GetAllExperiences();
 
         Task<List<Domain.Models.Location>> GetAllLocations();
-<<<<<<<<< Temporary merge branch 1
+
 
         Task<IEnumerable<JobSeekerResponseDTO>> GetAllJobSeekerAsync();
-=========
+
         Task<bool> DeleteJobSeekerAccount(Guid systemUserId);
->>>>>>>>> Temporary merge branch 2
+
 
     }
 }

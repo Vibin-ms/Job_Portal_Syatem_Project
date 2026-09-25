@@ -12,17 +12,102 @@ namespace Domain.Services.JobApplications.Services
 {
     public class ApplicationRepository:IApplicationRepository
     {
-        private readonly AppDbContext dbContext;
+        private readonly AppDbContext _context;
         public ApplicationRepository(AppDbContext _dbContext)
         {
-            dbContext = _dbContext;
+            _context = _dbContext;
         }
-        public async Task<IEnumerable<JobApplication>> GetApplicationsByJobPostAsync(Guid jobId)
+
+
+        public async Task<Models.JobProvider?> GetProviderBySystemUserIdAsync(Guid systemUserId)
         {
-            var application=await dbContext.JobApplications.Include(x=>x.AppliedJob.JobSeekerProfile.JobSeeker.SystemUser).Include(x=>x.AppliedJob.JobSeekerProfile.Skill)
-                .Include(x=>x.AppliedJob.JobSeekerProfile.Qualification).Include(x=>x.AppliedJob.JobSeekerProfile.Experience).Include(x=>x.AppliedJob.JobPost).Include(x=>x.AppliedJob.JobSeekerProfile)
-                .Where(x=>x.JobPostId==jobId).ToListAsync();
-            return application;
+            return await _context.JobProviders.FirstOrDefaultAsync(jp => jp.SystemUserId == systemUserId);
+        }
+
+        public async Task<Models.JobApplication?> GetByIdAsync(Guid applicationId)
+        {
+            return await _context.JobApplications
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.Company)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.JobSeeker)
+                            .ThenInclude(js => js.SystemUser)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.Skill)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.Qualification)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.Experience)
+                .FirstOrDefaultAsync(ja => ja.JobApplicationId == applicationId);
+        }
+
+        public async Task<IEnumerable<Models.JobApplication>> GetApplicationsByJobPostIdAsync(Guid jobPostId)
+        {
+            return await _context.JobApplications
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.Company)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.JobSeeker)
+                            .ThenInclude(js => js.SystemUser)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.Skill)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.Qualification)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.Experience)
+                .Where(ja => ja.JobPostId == jobPostId)
+                .OrderByDescending(ja => ja.ApplicationDate)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Models.JobApplication>> GetApplicationsByProviderIdAsync(Guid providerId)
+        {
+            return await _context.JobApplications
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.Company)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.JobSeeker)
+                            .ThenInclude(js => js.SystemUser)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.Skill)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.Qualification)
+                .Include(ja => ja.AppliedJob)
+                    .ThenInclude(aj => aj.JobSeekerProfile)
+                        .ThenInclude(jsp => jsp.Experience)
+                .Where(ja => ja.JobPost.JobProviderId == providerId)
+                .OrderByDescending(ja => ja.ApplicationDate)
+                .ToListAsync();
+        }
+
+        public async Task UpdateApplicationAsync(Models.JobApplication application)
+        {
+            _context.JobApplications.Update(application);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Models.JobApplication>> GetApplicationsByJobP0stAsync(Guid jobId)
+        {
+            return await _context.JobApplications
+                .Include(x => x.AppliedJob.JobSeekerProfile.JobSeeker.SystemUser)
+                .Include(x => x.AppliedJob.JobSeekerProfile.Skill)
+                .Include(x => x.AppliedJob.JobSeekerProfile.Qualification)
+                .Include(x => x.AppliedJob.JobSeekerProfile.Experience)
+                .Include(x => x.AppliedJob.JobPost)
+                .Include(x => x.AppliedJob.JobSeekerProfile)
+                .Where(x => x.JobPostId == jobId)
+                .ToListAsync();
         }
     }
 }

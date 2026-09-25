@@ -9,6 +9,11 @@ namespace Domain.Services.JobApplications.Interface
 {
     public interface IApplicationRepository
     {
-        Task<IEnumerable<JobApplication>>GetApplicationsByJobPostAsync(Guid jobId);
+        Task<Models.JobProvider?> GetProviderBySystemUserIdAsync(Guid systemUserId);
+        Task<Models.JobApplication?> GetByIdAsync(Guid applicationId);
+        Task<IEnumerable<Models.JobApplication>> GetApplicationsByJobPostIdAsync(Guid jobPostId);
+        Task<IEnumerable<Models.JobApplication>> GetApplicationsByProviderIdAsync(Guid providerId);
+        Task UpdateApplicationAsync(Models.JobApplication application);
+        Task<IEnumerable<Models.JobApplication>> GetApplicationsByJobP0stAsync(Guid jobId);
     }
 }

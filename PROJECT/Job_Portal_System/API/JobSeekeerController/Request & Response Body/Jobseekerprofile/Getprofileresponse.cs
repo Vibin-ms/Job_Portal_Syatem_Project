@@ -1,7 +1,8 @@
 ﻿namespace Job_Portal_System.API.JobSeekeerController.Request___Response_Body.Jobseekerprofile
 {
     public class Getprofileresponse
-    {
+    { 
+        public Guid JobSeekerProfileId { get; set; }
         public string? FirstName { get; set; }
 
         public string? LastName { get; set; }

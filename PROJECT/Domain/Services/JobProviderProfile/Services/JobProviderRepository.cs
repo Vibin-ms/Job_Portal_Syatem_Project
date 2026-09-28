@@ -42,6 +42,12 @@ namespace Domain.Services.JobProviderProfile.Services
             {
                 return false;
             }
+            var systemUserId= provider.SystemUserId;
+            
+           var jobs=await appDbContext.JobPosts.Where(x=>x.JobProviderId==id).ToListAsync();
+            appDbContext.JobPosts.RemoveRange(jobs);
+            var company = await appDbContext.Companies.Where(x => x.JobProviderId == id).ToListAsync();
+            appDbContext .Companies.RemoveRange(company);
             var systemUserId = provider.SystemUserId;
 
             var jobs = await _context.JobPosts.Where(x => x.JobProviderId == id).ToListAsync();

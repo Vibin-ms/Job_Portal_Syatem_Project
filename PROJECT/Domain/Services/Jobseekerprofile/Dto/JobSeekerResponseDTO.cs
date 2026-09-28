@@ -9,7 +9,7 @@ namespace Domain.Services.Jobseekerprofile.Dto
     public class JobSeekerResponseDTO
     {
         public Guid Id { get; set; }
-
+        public Guid JobSeekerProfileId { get; set; }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string Email { get; set; } = null!;

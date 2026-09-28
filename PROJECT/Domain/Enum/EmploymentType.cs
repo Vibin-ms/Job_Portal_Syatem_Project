@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Domain.Enum
 {
-    public enum ApplicationStatus
+    public enum EmploymentType
     {
-        Applied = 1,
-        Shortlisted = 2,
-        Rejected = 3,
-        Selected = 4,
-        InterviewScheduled = 5
+        FullTime = 1,
+        PartTime = 2,
+        Contract = 3,
+        Remote = 4,
+        Internship = 5
     }
 }

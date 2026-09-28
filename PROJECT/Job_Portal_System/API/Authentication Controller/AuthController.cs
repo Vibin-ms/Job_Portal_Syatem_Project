@@ -33,29 +33,36 @@ namespace Job_Portal_System.API.Authentication_Controller
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register(
-            Registerrequest request)
+        public async Task<IActionResult> Register(Registerrequest request)
         {
-            var dto = _mapper.Map<SystemuserDto>(request);
+            try
+            {
+                var dto = _mapper.Map<SystemuserDto>(request);
 
-            var result =
-                await _authService.RegisterAsync(dto);
+                var result = await _authService.RegisterAsync(dto);
 
-            if (result == null)
+                if (result == null)
+                {
+                    return BadRequest(new
+                    {
+                        Message = "Email already exists."
+                    });
+                }
+
+                var response = _mapper.Map<Registerresponse>(result);
+
+                response.Message =
+                    "Registration successful. Verification email sent.";
+
+                return Ok(response);
+            }
+            catch (InvalidOperationException ex)
             {
                 return BadRequest(new
                 {
-                    Message = "Email already exists."
+                    Message = ex.Message
                 });
             }
-
-            var response =
-                _mapper.Map<Registerresponse>(result);
-
-            response.Message =
-                "Registration successful. Verification email sent.";
-
-            return Ok(response);
         }
         [HttpPost]
         [Route("CreatePassword")]

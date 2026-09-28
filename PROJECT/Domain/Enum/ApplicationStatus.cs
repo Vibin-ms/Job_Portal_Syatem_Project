@@ -11,6 +11,7 @@ namespace Domain.Enum
         Applied = 1,
         Shortlisted = 2,
         Rejected = 3,
-        Selected = 4
+        Selected = 4,
+        InterviewScheduled = 5
     }
 }
